@@ -1,11 +1,11 @@
-# 🚗 Driver Monitoring System (DMS)
+# Driver Monitoring System (DMS)
 
 A real‑time driver drowsiness detection system built with **Python**, **OpenCV**, and **MediaPipe Tasks API**.  
 It monitors eye closure, blink patterns, yawning, and head posture using a standard webcam, and displays a live dashboard with fatigue indicators.
 
 ---
 
-## 📸 Live Demo
+## Live Demo
 
 <video src="demo.mp4" controls width="100%" autoplay muted loop>
   Your browser does not support the video tag. 
@@ -16,7 +16,7 @@ It monitors eye closure, blink patterns, yawning, and head posture using a stand
 
 ---
 
-## ✨ Features
+## Features
 
 - **Eye Aspect Ratio (EAR)** based drowsiness detection  
 - **Blink counting** (detects rapid eye closure)  
@@ -35,7 +35,7 @@ It monitors eye closure, blink patterns, yawning, and head posture using a stand
 
 ---
 
-## 🧠 Tech Stack
+## Tech Stack
 
 | Component | Technology |
 |-----------|------------|
@@ -47,7 +47,7 @@ It monitors eye closure, blink patterns, yawning, and head posture using a stand
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
