@@ -3,26 +3,16 @@ import math
 import time
 from collections import deque
 
-# ============================================
-# NEW: MediaPipe Tasks API (instead of solutions)
-# ============================================
 import mediapipe as mp
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 
-# ============================================
-# CONFIGURATION
-# ============================================
 EAR_THRESHOLD = 0.25
 CONSEC_FRAMES_FOR_ALERT = 15
 YAWN_THRESHOLD = 0.65
 
-# ============================================
-# INITIALIZE FACE LANDMARKER (Tasks API)
-# ============================================
 model_path = "face_landmarker.task"
-# If the above path doesn't work, you can download the model manually:
-# https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task
+
 
 base_options = python.BaseOptions(model_asset_path=model_path)
 options = vision.FaceLandmarkerOptions(
@@ -34,9 +24,6 @@ options = vision.FaceLandmarkerOptions(
 )
 landmarker = vision.FaceLandmarker.create_from_options(options)
 
-# ============================================
-# HELPER FUNCTIONS (same as before)
-# ============================================
 def get_coords(landmark, shape):
     h, w, _ = shape
     return int(landmark.x * w), int(landmark.y * h)
@@ -45,7 +32,6 @@ def euclidean(p1, p2):
     return math.hypot(p1[0] - p2[0], p1[1] - p2[1])
 
 def eye_aspect_ratio(landmarks, shape):
-    # landmarks is a list of 478 normalized landmarks
     left_eye = [33, 160, 158, 133, 153, 144]
     right_eye = [362, 385, 387, 263, 373, 380]
 
@@ -74,9 +60,6 @@ def head_down_score(landmarks, shape):
     eye_avg_y = (left_eye[1] + right_eye[1]) / 2
     return nose[1] - eye_avg_y
 
-# ============================================
-# DASHBOARD DRAWING (identical)
-# ============================================
 def draw_dashboard(frame, ear, blinks, yawns, fatigue, status, elapsed_sec):
     h, w, _ = frame.shape
     overlay = frame.copy()
@@ -109,9 +92,7 @@ def draw_dashboard(frame, ear, blinks, yawns, fatigue, status, elapsed_sec):
     cv2.putText(frame, timer_str, (w - tw - 20, h - 20),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1)
 
-# ============================================
-# MAIN LOOP (with Tasks API)
-# ============================================
+
 def main():
     cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
     if not cap.isOpened():
@@ -136,10 +117,10 @@ def main():
         frame = cv2.flip(frame, 1)
         rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-        # Convert frame to MediaPipe Image
+    
         mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb)
 
-        # Detect face landmarks
+    
         detection_result = landmarker.detect(mp_image)
         landmarks = detection_result.face_landmarks[0] if detection_result.face_landmarks else None
 
@@ -153,7 +134,7 @@ def main():
             mar = mouth_aspect_ratio(landmarks, shape)
             head_down = head_down_score(landmarks, shape)
 
-            # Blink
+            
             if ear < EAR_THRESHOLD:
                 eye_closed_frames += 1
                 was_eye_closed = True
@@ -163,7 +144,7 @@ def main():
                 was_eye_closed = False
                 eye_closed_frames = 0
 
-            # Yawn
+            
             if mar > YAWN_THRESHOLD:
                 if not was_yawning:
                     yawn_counter += 1
@@ -171,13 +152,13 @@ def main():
             else:
                 was_yawning = False
 
-            # Fatigue
+         
             ear_history.append(ear)
             if len(ear_history) > 10:
                 avg_ear = sum(ear_history) / len(ear_history)
                 fatigue = max(0, min(100, int((1 - avg_ear / 0.30) * 100)))
 
-            # Status
+            
             if ear < EAR_THRESHOLD and eye_closed_frames > CONSEC_FRAMES_FOR_ALERT:
                 status = "DROWSY"
             elif head_down > 25:
