@@ -7,6 +7,8 @@ It monitors eye closure, blink patterns, yawning, and head posture using a stand
 
 ## Live Demo
 
+You can see the demo video attached - "demo.mp4"
+
 <video src="demo.mp4" controls width="100%" autoplay muted loop>
   Your browser does not support the video tag. 
   <a href="demo.mp4">Download demo.mp4</a>
